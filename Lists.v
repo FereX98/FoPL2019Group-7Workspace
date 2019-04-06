@@ -821,17 +821,24 @@ Proof.
 Theorem app_nil_r : forall l : natlist,
   l ++ [] = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l. induction l as [| n l' HL'].
+  - reflexivity.
+  - simpl. rewrite -> HL'. reflexivity. Qed.
 
 Theorem rev_app_distr: forall l1 l2 : natlist,
   rev (l1 ++ l2) = rev l2 ++ rev l1.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l1 l2. induction l1 as [| n1 l1' HL1].
+  - simpl. rewrite -> app_nil_r. reflexivity.
+  - simpl. rewrite -> HL1. rewrite -> app_assoc. reflexivity.
+Qed.
 
 Theorem rev_involutive : forall l : natlist,
   rev (rev l) = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l. induction l as [| n l' HL].
+  - reflexivity.
+  - simpl. rewrite -> rev_app_distr. rewrite -> HL. simpl. reflexivity. Qed.
 
 (** There is a short solution to the next one.  If you find yourself
     getting tangled up, step back and try to look for a simpler
@@ -840,41 +847,23 @@ Proof.
 Theorem app_assoc4 : forall l1 l2 l3 l4 : natlist,
   l1 ++ (l2 ++ (l3 ++ l4)) = ((l1 ++ l2) ++ l3) ++ l4.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l1 l2 l3 l4.
+  rewrite -> app_assoc.
+  rewrite -> app_assoc.
+  reflexivity.
+  Qed.
 
 (** An exercise about your implementation of [nonzeros]: *)
 
 Lemma nonzeros_app : forall l1 l2 : natlist,
   nonzeros (l1 ++ l2) = (nonzeros l1) ++ (nonzeros l2).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
-(** **** Exercise: 2 stars, standard (eqblist)  
-
-    Fill in the definition of [eqblist], which compares
-    lists of numbers for equality.  Prove that [eqblist l l]
-    yields [true] for every list [l]. *)
-
-Fixpoint eqblist (l1 l2 : natlist) : bool
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
-
-Example test_eqblist1 :
-  (eqblist nil nil = true).
- (* FILL IN HERE *) Admitted.
-
-Example test_eqblist2 :
-  eqblist [1;2;3] [1;2;3] = true.
-(* FILL IN HERE *) Admitted.
-
-Example test_eqblist3 :
-  eqblist [1;2;3] [1;2;4] = false.
- (* FILL IN HERE *) Admitted.
-
-Theorem eqblist_refl : forall l:natlist,
-  true = eqblist l l.
-Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l1 l2. induction l1 as [| n1 l1' HL1].
+  - reflexivity.
+  - destruct n1 as [| n1'].
+    + simpl. rewrite -> HL1. reflexivity.
+    + simpl. rewrite -> HL1. reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
