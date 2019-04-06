@@ -1204,12 +1204,65 @@ Fixpoint find (x : id) (d : partial_map) : natoption :=
                      else find x d'
   end.
 
+(** **** Exercise: 1 star, standard (eqb_id_refl)  *)
+Theorem eqb_id_refl : forall x, true = eqb_id x x.
+Proof.
+  intros x. destruct x as [n]. 
+  assert(H: n =? n = true). 
+     {induction n as [| n' IHn'].
+      - reflexivity.
+      - simpl. rewrite -> IHn'. reflexivity. }
+  simpl. rewrite -> H. reflexivity.
+Qed.
+(*WB: 这个一星写的是不是有点复杂*)
+(** [] *)
+
+(** Now we define the type of partial maps: *)
+
+Module PartialMap.
+Export NatList.
+  
+Inductive partial_map : Type :=
+  | empty
+  | record (i : id) (v : nat) (m : partial_map).
+
+(** This declaration can be read: "There are two ways to construct a
+    [partial_map]: either using the constructor [empty] to represent an
+    empty partial map, or by applying the constructor [record] to
+    a key, a value, and an existing [partial_map] to construct a
+    [partial_map] with an additional key-to-value mapping." *)
+
+(** The [update] function overrides the entry for a given key in a
+    partial map by shadowing it with a new one (or simply adds a new
+    entry if the given key is not already present). *)
+
+Definition update (d : partial_map)
+                  (x : id) (value : nat)
+                  : partial_map :=
+  record x value d.
+
+(** Last, the [find] function searches a [partial_map] for a given
+    key.  It returns [None] if the key was not found and [Some val] if
+    the key was associated with [val]. If the same key is mapped to
+    multiple values, [find] will return the first one it
+    encounters. *)
+
+Fixpoint find (x : id) (d : partial_map) : natoption :=
+  match d with
+  | empty         => None
+  | record y v d' => if eqb_id x y
+                     then Some v
+                     else find x d'
+  end.
+
 (** **** Exercise: 1 star, standard (update_eq)  *)
 Theorem update_eq :
   forall (d : partial_map) (x : id) (v: nat),
     find x (update d x v) = Some v.
 Proof.
- (* FILL IN HERE *) Admitted.
+ intros d x v. simpl. rewrite <- eqb_id_refl. reflexivity.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 1 star, standard (update_neq)  *)
@@ -1217,7 +1270,9 @@ Theorem update_neq :
   forall (d : partial_map) (x y : id) (o: nat),
     eqb_id x y = false -> find x (update d y o) = find x d.
 Proof.
- (* FILL IN HERE *) Admitted.
+ intros d x y o. intros H. simpl. rewrite -> H. reflexivity.
+Qed.
+
 (** [] *)
 End PartialMap.
 
@@ -1232,7 +1287,8 @@ Inductive baz : Type :=
 (** How _many_ elements does the type [baz] have? (Explain in words,
     in a comment.) *)
 
-(* FILL IN HERE *)
+(* 这样定义的话，baz会无限推导下去。反复使用Baz1/Baz2构造器，是无限深的。
+如果夹杂使用Baz2构造器，还会有一些bool类型元素。 *)
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_baz_num_elts : option (nat*string) := None.
