@@ -1243,8 +1243,9 @@ Inductive baz : Type :=
 (** How _many_ elements does the type [baz] have? (Explain in words,
     in a comment.) *)
 
-(* 这样定义的话，baz会无限推导下去。反复使用Baz1/Baz2构造器，是无限深的。
-如果夹杂使用Baz2构造器，还会有一些bool类型元素。 *)
+(* baz 类型没有元素。原因：baz 的两种展开式都包含 baz 类型的变量，这意味着
+经过任意次推导后的项中只会仍然存在 baz 类型的变量，推导永远无法使其变成一个不能再
+继续推导的项，因此这一类型没有元素。*)
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_baz_num_elts : option (nat*string) := None.
