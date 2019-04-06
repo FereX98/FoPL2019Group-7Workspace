@@ -1163,50 +1163,6 @@ Definition eqb_id (x1 x2 : id) :=
 (** **** Exercise: 1 star, standard (eqb_id_refl)  *)
 Theorem eqb_id_refl : forall x, true = eqb_id x x.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
-(** Now we define the type of partial maps: *)
-
-Module PartialMap.
-Export NatList.
-  
-Inductive partial_map : Type :=
-  | empty
-  | record (i : id) (v : nat) (m : partial_map).
-
-(** This declaration can be read: "There are two ways to construct a
-    [partial_map]: either using the constructor [empty] to represent an
-    empty partial map, or by applying the constructor [record] to
-    a key, a value, and an existing [partial_map] to construct a
-    [partial_map] with an additional key-to-value mapping." *)
-
-(** The [update] function overrides the entry for a given key in a
-    partial map by shadowing it with a new one (or simply adds a new
-    entry if the given key is not already present). *)
-
-Definition update (d : partial_map)
-                  (x : id) (value : nat)
-                  : partial_map :=
-  record x value d.
-
-(** Last, the [find] function searches a [partial_map] for a given
-    key.  It returns [None] if the key was not found and [Some val] if
-    the key was associated with [val]. If the same key is mapped to
-    multiple values, [find] will return the first one it
-    encounters. *)
-
-Fixpoint find (x : id) (d : partial_map) : natoption :=
-  match d with
-  | empty         => None
-  | record y v d' => if eqb_id x y
-                     then Some v
-                     else find x d'
-  end.
-
-(** **** Exercise: 1 star, standard (eqb_id_refl)  *)
-Theorem eqb_id_refl : forall x, true = eqb_id x x.
-Proof.
   intros x. destruct x as [n]. 
   assert(H: n =? n = true). 
      {induction n as [| n' IHn'].
